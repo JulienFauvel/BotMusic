@@ -63,7 +63,7 @@ function stop() {
 //Skip if more than 50% of the users type !skip
 function skip(userID) {
   if (skipArray == null) {
-    skipArray = Array(bot.servers[0].members.length, 2);
+    skipArray = Array(bot.servers[0].members.length);
     skipArray.fill(0);
   }
 
