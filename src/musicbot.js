@@ -10,6 +10,7 @@ var URL = require('url');
 var audioStream = null;
 var currentSong = null;
 var queue = Array();
+var skipArray = Array();
 
 var bot = new DiscordClient({
   autorun: true,
@@ -37,7 +38,7 @@ bot.on('message', function(user, userID, channelID, message, rawEvent) {
     } break;
 
     case "!skip": {
-      //TODO: Ajouter un skip si plus de 50% des personnes veulent changer
+      skip(userID);
     } break;
 
     case "!reset": {
@@ -58,6 +59,37 @@ function reset() {
 //Stop the audio
 function stop() {
   stream.stopAudioFile();
+}
+
+//Skip if more than 50% of the users type !skip
+function skip(userID) {
+  if (skipArray == null) {
+    skipArray = Array(bot.servers[0].members.length, 2);
+    skipArray.fill(0);
+  }
+
+  skipArray[userID] = 1;
+
+  var skipSum = 0;
+  for (var i = 0; i < skipArray.length; i++) {
+    skipSum += skipArray[i];
+  }
+
+  var onlineMembers = 0;
+  for (var i = 0; i < bot.servers[0].members.length; i++) {
+    if (bot.servers[0].members[i].status == "online")
+      onlineMembers++;
+  }
+
+  if (skipSum > (onlineMembers / 2)) {
+    if (queue.length > 0) {
+      // audioStream.playAudioFile(queue.shift());
+      // ??? Skip method ?
+
+    }
+    console.log('Skipped song')
+    skipArray.fill(0);
+  }
 }
 
 //Return the voice channel where the user is

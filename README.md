@@ -1,4 +1,4 @@
 # BotMusic
-Discord Bot who Youtube clips
+Discord Bot who plays Youtube clips
 
 WIP
