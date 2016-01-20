@@ -2,3 +2,4 @@ auth.json
 tenc
 node_modules/*
 *.mp3
+npm-debug.log

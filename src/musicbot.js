@@ -33,7 +33,11 @@ bot.on('message', function(user, userID, channelID, message, rawEvent) {
 
     case "!addsong": {
       var url = message.toLowerCase().split(" ")[1];
-      queue.push(new YoutubeSong(url, user, userID));
+      if(url.indexOf('youtube') > -1 || url.indexOf('youtu.be') > -1) {
+        queue.push(new YoutubeSong(url, user, userID));
+      } else {
+        console.log('Empty addsong request : ' + message);
+      }
     } break;
 
     case "!skip": {

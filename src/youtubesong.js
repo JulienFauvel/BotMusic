@@ -2,23 +2,12 @@
 var http = require('http');
 var fs = require('fs');
 var url = require('url');
+var filePath = './tmp/youtube_video_info.tmp';
 
 module.exports = function YoutubeSong(url, user, userID) {
   this.url = url;
   this.user = user;
   this.userID = userID;
-
-  YoutubeSong.prototype.getTitleById = function(id) {
-    var infoUrl = 'http://youtube.com/get_video_info?video_id=' + id;
-    var tmpFile = fs.createWriteStream('./tmp/youtube_video_info.tmp');
-
-    var request = http.get(infoUrl, function(argument) {
-      response.pipe(tmpFile);
-      file.on('finish', function() {
-        file.close(readInfoFile(file));
-      });
-    });
-  };
 
   //Return the id of a Youtube video's url
   YoutubeSong.prototype.getIdFromUrl = function(url) {
@@ -32,7 +21,6 @@ module.exports = function YoutubeSong(url, user, userID) {
   }
 
   YoutubeSong.prototype.getTitleFromId = function(id) {
-    var filePath = './tmp/youtube_video_info.tmp';
     var infoUrl = 'http://youtube.com/get_video_info?video_id=' + id;
 
     console.log(infoUrl);
@@ -40,28 +28,30 @@ module.exports = function YoutubeSong(url, user, userID) {
     var tmpFile = fs.createWriteStream(filePath);
 
     var request = http.get(infoUrl, function(response) {
+
+      console.log(response);
       response.pipe(tmpFile);
+      console.log(response);
 
       tmpFile.on('finish', function() {
-        tmpFile.close(function (filePath) {
-          console.log("Filepath : " + filePath);
+        fs.close(tmpFile, function () {
 
           fs.readFile(filePath, 'utf8', function(err, data) {
             if(err) {
               console.error('File ' + filePath + ' can\'t be find');
             } else {
               console.log(data);
-              var parsedData = url.parse(data);
+              var parsedData = URL.parse(data);
               console.log(parsedData);
               this.title = parsedData.title;
             }
           }); //readFile
         }); //Close
-      }); //On finish
+      }); //on finish
     }); //Request GET
   }
 
-  YoutubeSong.prototype.readInfoFile = function (file) {
+  YoutubeSong.prototype.readInfoFile = function(file) {
     fs.readFile(file, 'utf8', function(err, data) {
       if(err) {
         console.error('File ' + file + ' can\'t be find');
@@ -75,7 +65,9 @@ module.exports = function YoutubeSong(url, user, userID) {
   }
 
   this.id = this.getIdFromUrl(this.url);
-  this.getTitleFromId(this.id);
+  if(this.id != null) {
+    this.getTitleFromId(this.id);
+  }
 
   // var downloadFile = function() {
   //   //TODO
