@@ -1,6 +1,6 @@
 {
 	"name": "BotMusic",
-	"script": {
+	"scripts": {
 		"start": "node ./src/musicbot.js"
 	},
 
