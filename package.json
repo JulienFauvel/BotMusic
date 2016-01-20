@@ -1,0 +1,10 @@
+{
+	"name": "BotMusic",
+	"script": {
+		"start": "node ./src/musicbot.js"
+	},
+
+	"dependencies": {
+		"discord.io": "*"
+	}
+}
