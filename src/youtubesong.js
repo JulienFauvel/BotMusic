@@ -1,13 +1,20 @@
 'use strict';
 var http = require('http');
 var fs = require('fs');
-var url = require('url');
-var filePath = './tmp/youtube_video_info.tmp';
+
+var request = require('request');
+
+var URL = require('url');
+
+var GEN_ID = 1;
+var DOWNLOAD_DIR = './musics/';
+
 
 module.exports = function YoutubeSong(url, user, userID) {
   this.url = url;
   this.user = user;
   this.userID = userID;
+  const id_video = GEN_ID++;
 
   //Return the id of a Youtube video's url
   YoutubeSong.prototype.getIdFromUrl = function(url) {
@@ -20,35 +27,61 @@ module.exports = function YoutubeSong(url, user, userID) {
     return videoId;
   }
 
-  YoutubeSong.prototype.getTitleFromId = function(id) {
-    var infoUrl = 'http://youtube.com/get_video_info?video_id=' + id;
+  YoutubeSong.prototype.getSongInformation = function() {
+    var options = {
+      host: 'www.youtubeinmp3.com',
+      port: 80,
+      path: '/fetch/?format=JSON&video=' + this.url
+    };
 
-    console.log(infoUrl);
+    http.request(options, function(res) {
+      var str = '';
+      res.on('data', function(chunk) {
+        str += chunk;
+      });
+      res.on('end', function() {
+        var obj = JSON.parse(str);
+        console.log('str' + str);
+        console.log('obj' + obj);
+        download(obj['link'], DOWNLOAD_DIR + obj['link'] + '.mp3', function (err) {
+          if(err) {
+            console.log(err);
+          } else {
+            console.log('Downloaded file without errors');
+          }
+        });
+      }); //Response on end, First GET request
+    }).end();//GET Request (JSON)
 
-    var tmpFile = fs.createWriteStream(filePath);
 
-    var request = http.get(infoUrl, function(response) {
+  }
 
-      console.log(response);
-      response.pipe(tmpFile);
-      console.log(response);
+  YoutubeSong.prototype.downloadSong = function(url, dest, cb) {
+    var file = fs.createWriteStream(dest);
+    var sendReq = request.get(url);
 
-      tmpFile.on('finish', function() {
-        fs.close(tmpFile, function () {
+    // verify response code
+    sendReq.on('response', function(response) {
+      if (response.statusCode !== 200) {
+        return cb('Response status was ' + response.statusCode);
+      }
+    });
 
-          fs.readFile(filePath, 'utf8', function(err, data) {
-            if(err) {
-              console.error('File ' + filePath + ' can\'t be find');
-            } else {
-              console.log(data);
-              var parsedData = URL.parse(data);
-              console.log(parsedData);
-              this.title = parsedData.title;
-            }
-          }); //readFile
-        }); //Close
-      }); //on finish
-    }); //Request GET
+    // check for request errors
+    sendReq.on('error', function (err) {
+      fs.unlink(dest);
+      if(cb) return cb(err.message);
+    });
+
+    sendReq.pipe(file);
+
+    file.on('finish', function() {
+      file.close(cb);  // close() is async, call cb after close completes.
+    });
+    file.on('error', function(err) { // Handle errors
+      fs.unlink(dest); // Delete the file async. (But we don't check the result)
+      if(cb) return cb(err.message);
+    });
   }
 
   YoutubeSong.prototype.readInfoFile = function(file) {
@@ -65,11 +98,5 @@ module.exports = function YoutubeSong(url, user, userID) {
   }
 
   this.id = this.getIdFromUrl(this.url);
-  if(this.id != null) {
-    this.getTitleFromId(this.id);
-  }
-
-  // var downloadFile = function() {
-  //   //TODO
-  // }
+  this.getSongInformation();
 }

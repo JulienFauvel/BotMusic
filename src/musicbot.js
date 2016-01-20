@@ -18,11 +18,6 @@ var bot = new DiscordClient({
   password: auth.password
 });
 
-
-bot.on('ready', function(rawEvent) {
-  console.log(bot.username + " connected (" + bot.id + ")");
-});
-
 bot.on('message', function(user, userID, channelID, message, rawEvent) {
   var cmd = message.toLowerCase().split(" ")[0];
 
@@ -87,13 +82,18 @@ function skip(userID) {
 
   if (skipSum > (onlineMembers / 2)) {
     if (queue.length > 0) {
-      // audioStream.playAudioFile(queue.shift());
-      // ??? Skip method ?
-
+      nextSong();
     }
     console.log('Skipped song')
     skipArray.fill(0);
   }
+}
+
+function nextSong() {
+  stop();
+  queue.shift();
+  currentSong = queue[0];
+  //audioStream.playAudioFile(getSongFile(currentSong));
 }
 
 //Return the voice channel where the user is
@@ -146,4 +146,10 @@ function debug() {
   console.log(queue);
 }
 
-setInterval(debug, 2000);
+
+bot.on('ready', function(rawEvent) {
+  console.log(bot.username + " connected (" + bot.id + ")");
+  setInterval(debug, 2000);
+  var ys = new YoutubeSong('https://www.youtube.com/watch?v=CDfOFyXGgJU', 'Okawi', '12345678901234567890');
+  ys.downloadSong();
+});
