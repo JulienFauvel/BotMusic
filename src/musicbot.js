@@ -47,24 +47,26 @@ bot.on('message', function(user, userID, channelID, message, rawEvent) {
   }
 });
 
-function addSong(youtubeSong) {
-  var url = message.toLowerCase().split(" ")[1];
-  if(url.indexOf('youtube') > -1 || url.indexOf('youtu.be') > -1) {
+function addSong(url) {
+  if(url && url.length > 0) {
     var youtubeSong = new YoutubeSong(url, user, userID);
 
     //If url is wrong
-    if(youtubeSong == null) return;
-
-    youtubeSong.downloadFile(function (err) {
-      if(err) {
-        console.log(err);
-        sendMessage('@' + youtubeSong.username + ' Impossible to load ' + youtubeSong.url);
-      } else {
-        queue.push(youtubeSong);
-      }
-    });
+    if(youtubeSong.isVald) {
+      youtubeSong.downloadFile(function (err) {
+        if(err) {
+          console.log(err);
+          sendMessage('@' + youtubeSong.username + ' Impossible to load ' + youtubeSong.url);
+        } else {
+          queue.push(youtubeSong);
+          if(currentSong == null) {
+            start();
+          }
+        }
+      });
+    }
   } else {
-    console.log('Empty addsong request : ' + message);
+    console.log('Empty addsong requested');
   }
 }
 
@@ -73,10 +75,37 @@ function reset() {
   queue.length = 0
 }
 
+//Start the first song in the queue
+function start() {
+  if(queue.length > 0) {
+    currentSong = queue[0];
+    if(currentSong && currentSong.isValid) {
+      var songPath = DOWNLOAD_DIR + currentSong.id_video + '.mp3';
+      audioStream.playAudioFile(path);
+      audioStream.once('fileEnd', nextSong);
+    }
+  } else {
+    currentSong = null;
+  }
+
+}
+
 //Stop the audio
 function stop() {
   stream.stopAudioFile();
+  if(queue.length > 0) {
+    queue.shift()
+  }
+  currentSong = null;
 }
+
+//Start the next song if there is one
+function nextSong() {
+  stop();
+  queue.shift();
+  start();
+}
+
 
 //Skip if more than 50% of the users type !skip
 function skip(userID) {
@@ -107,20 +136,6 @@ function skip(userID) {
   }
 }
 
-function nextSong() {
-
-  stop();
-  queue.shift();
-  currentSong = queue[0];
-  if(currentSong.isValid) {
-    var songPath = DOWNLOAD_DIR + currentSong.id_video + '.mp3';
-    audioStream.playAudioFile(path);
-    audioStream.once('fileEnd', function() {
-      console.log('Audio file ended');
-      nextSong();
-    });
-  }
-}
 
 //Return the voice channel where the user is
 function findVoiceChannelIdWhereUserIs(userID) {

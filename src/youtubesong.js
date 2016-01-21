@@ -20,7 +20,8 @@ module.exports = function YoutubeSong(urlVideo, username, userID) {
     this.userID = userID;
     this.isValid = true;
 
-    this.videoID = urlV.split('v=')[1];
+    //Extract the video's ID from the url
+    this.videoID = urlVideo.split('v=')[1];
     var ampersandPosition = videoID.indexOf('&');
     if(ampersandPosition != -1) {
       this.videoID = videoID.substring(0, ampersandPosition);
@@ -28,18 +29,6 @@ module.exports = function YoutubeSong(urlVideo, username, userID) {
 
   } else {
     this.isValid = false;
-  }
-
-
-  //Return the id of a Youtube video's url
-  YoutubeSong.prototype.getIdFromUrl = function(urlV) {
-    var videoId = urlV.split('v=')[1];
-    var ampersandPosition = videoId.indexOf('&');
-    if(ampersandPosition != -1) {
-      videoId = videoId.substring(0, ampersandPosition);
-    }
-
-    return videoId;
   }
 
   YoutubeSong.prototype.downloadSong = function(callback) {
@@ -95,9 +84,5 @@ module.exports = function YoutubeSong(urlVideo, username, userID) {
         }
       });
     }).end();
-  }
-
-  if(this.isValid) {
-    this.id = this.getIdFromUrl(this.videoUrl);
   }
 }
