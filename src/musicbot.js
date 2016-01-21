@@ -7,6 +7,8 @@ var http = require('http');
 var fs = require('fs');
 var URL = require('url');
 
+var DOWNLOAD_DIR = './musics/';
+
 var audioStream = null;
 var currentSong = null;
 var queue = Array();
@@ -28,12 +30,7 @@ bot.on('message', function(user, userID, channelID, message, rawEvent) {
     } break;
 
     case "!addsong": {
-      var url = message.toLowerCase().split(" ")[1];
-      if(url.indexOf('youtube') > -1 || url.indexOf('youtu.be') > -1) {
-        queue.push(new YoutubeSong(url, user, userID));
-      } else {
-        console.log('Empty addsong request : ' + message);
-      }
+      addSong(message.toLowerCase().split(" ")[1]);
     } break;
 
     case "!skip": {
@@ -49,6 +46,27 @@ bot.on('message', function(user, userID, channelID, message, rawEvent) {
     } break;
   }
 });
+
+function addSong(youtubeSong) {
+  var url = message.toLowerCase().split(" ")[1];
+  if(url.indexOf('youtube') > -1 || url.indexOf('youtu.be') > -1) {
+    var youtubeSong = new YoutubeSong(url, user, userID);
+
+    //If url is wrong
+    if(youtubeSong == null) return;
+
+    youtubeSong.downloadFile(function (err) {
+      if(err) {
+        console.log(err);
+        sendMessage('@' + youtubeSong.username + ' Impossible to load ' + youtubeSong.url);
+      } else {
+        queue.push(youtubeSong);
+      }
+    });
+  } else {
+    console.log('Empty addsong request : ' + message);
+  }
+}
 
 //reset the queue
 function reset() {
@@ -90,10 +108,18 @@ function skip(userID) {
 }
 
 function nextSong() {
+
   stop();
   queue.shift();
   currentSong = queue[0];
-  //audioStream.playAudioFile(getSongFile(currentSong));
+  if(currentSong.isValid) {
+    var songPath = DOWNLOAD_DIR + currentSong.id_video + '.mp3';
+    audioStream.playAudioFile(path);
+    audioStream.once('fileEnd', function() {
+      console.log('Audio file ended');
+      nextSong();
+    });
+  }
 }
 
 //Return the voice channel where the user is
@@ -117,11 +143,6 @@ function joinChannel(user, userID, channelID) {
     bot.joinVoiceChannel(voiceChannel, function () {
       bot.getAudioContext({channel: voiceChannel, stereo: true}, function(stream) {
           audioStream = stream;
-          stream.playAudioFile('test.mp3'); //To start playing an audio file, will stop when it's done.
-
-          stream.once('fileEnd', function() {
-            console.log('Audio file ended');
-          });
       });
     });
 
@@ -139,17 +160,20 @@ function sendMessage(message, channelID) {
 }
 
 function debug() {
-  console.log("currentSong :");
-  console.log(currentSong);
-
-  console.log("queue :");
-  console.log(queue);
+  console.log('currentSong : ' + currentSong);
+  console.log('queue : ' + queue);
 }
 
 
 bot.on('ready', function(rawEvent) {
   console.log(bot.username + " connected (" + bot.id + ")");
-  setInterval(debug, 2000);
+  setInterval(debug, 5000);
   var ys = new YoutubeSong('https://www.youtube.com/watch?v=CDfOFyXGgJU', 'Okawi', '12345678901234567890');
-  ys.downloadSong();
+  console.log(ys);
+  if(ys.isValid) {
+    ys.downloadSong(function (err) {
+      if(err) console.log(err);
+      else    console.log('Téléchargement fini');
+    });
+  }
 });
