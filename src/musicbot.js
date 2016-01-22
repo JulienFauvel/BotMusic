@@ -76,11 +76,10 @@ function addSong(url, username, userID) {
       if(youtubeSong.isValid) {
         youtubeSong.downloadSong(function (err) {
           if(err) {
-            console.log(err);
+            console.error(err);
             sendMessage('@' + youtubeSong.username + ' Impossible to load ' + youtubeSong.url);
           } else {
             queue.push(youtubeSong);
-            console.log(queue);
             if(currentSong == null) {
               start();
             }
@@ -102,7 +101,6 @@ function start() {
     currentSong = queue[0];
     if(currentSong && currentSong.isValid) {
       var songPath = DOWNLOAD_DIR + currentSong.id + '.mp3';
-      console.log(songPath);
       audioStream.playAudioFile(songPath);
       audioStream.once('fileEnd', nextSong);
     }
@@ -120,15 +118,21 @@ function stop() {
 
 //Start the next song if there is one
 function nextSong() {
-  stop();
   if(queue.length > 0) {
     queue.shift();
   }
+  stop();
   start();
+}
+
+function skipSong() {
+  queue.shift()
+  stop();
 }
 
 
 //Skip if more than 50% of the users have typed !skip
+//TODO: check for
 function skip(userID) {
   var serverID = Object.keys(bot.servers)[0];
 
@@ -145,19 +149,18 @@ function skip(userID) {
   }
 
   var onlineMembers = 0;
-  for (var i = 0; i < bot.servers[serverID].members.length; i++) {
-    console.log(bot.servers[serverID].members[i]);
-    if (bot.servers[serverID].members[i].status == "online")
+  for (var member in bot.servers[serverID].members) {
+    if (members.status == 'online')
       onlineMembers++;
   }
 
   console.log('onlineMembers = ' + onlineMembers);
-  console.log((skipSum > (onlineMembers-1 / 2)));
+  console.log('Condition : ' + (skipSum > (onlineMembers-1 / 2)));
   console.log(skipArray);
 
   if (skipSum > (onlineMembers-1 / 2)) {
     if (queue.length > 0) {
-      nextSong();
+      skipSong();
     }
     console.log('Skipped song')
     skipArray.fill(0);
