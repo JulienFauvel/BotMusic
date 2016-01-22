@@ -131,9 +131,10 @@ function nextSong() {
 
 //Skip if more than 50% of the users have typed !skip
 function skip(userID) {
-  console.log(bot.servers[0]);
+  var serverID = Object.keys(bot.servers)[0];
+  console.log(bot.servers[serverID]);
   if (skipArray == null) {
-    skipArray = Array(bot.servers[0].members.length);
+    skipArray = Array(bot.servers[serverID].members.length);
     skipArray.fill(0);
   }
 
@@ -145,8 +146,8 @@ function skip(userID) {
   }
 
   var onlineMembers = 0;
-  for (var i = 0; i < bot.servers[0].members.length; i++) {
-    if (bot.servers[0].members[i].status == "online")
+  for (var i = 0; i < bot.servers[serverID].members.length; i++) {
+    if (bot.servers[serverID].members[i].status == "online")
       onlineMembers++;
   }
 
