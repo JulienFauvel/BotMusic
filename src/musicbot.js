@@ -150,7 +150,7 @@ function skip(userID) {
 
   var onlineMembers = 0;
   for (var member in bot.servers[serverID].members) {
-    if (members.status == 'online')
+    if (member.status == 'online')
       onlineMembers++;
   }
 
