@@ -21,11 +21,11 @@ var bot = new DiscordClient({
 
 bot.on('message', function(username, userID, channelID, message, rawEvent) {
   var cmd = message.toLowerCase().split(" ")[0];
-
+  console.log(cmd);
   switch (cmd) {
     case "!come":
     case "!came": {
-      joinChannel(username, userID, channelID);
+      joinChannel(userID, channelID);
     } break;
 
     case "!addsong": {
@@ -38,6 +38,10 @@ bot.on('message', function(username, userID, channelID, message, rawEvent) {
 
     case "!reset": {
       reset();
+    } break;
+
+    case "!start": {
+      start();
     } break;
 
     case "!stop": {
@@ -58,6 +62,7 @@ function addSong(url, username, userID) {
           sendMessage('@' + youtubeSong.username + ' Impossible to load ' + youtubeSong.url);
         } else {
           queue.push(youtubeSong);
+          console.log(queue);
           if(currentSong == null) {
             start();
           }
@@ -79,8 +84,9 @@ function start() {
   if(queue.length > 0) {
     currentSong = queue[0];
     if(currentSong && currentSong.isValid) {
-      var songPath = DOWNLOAD_DIR + currentSong.id_video + '.mp3';
-      audioStream.playAudioFile(path);
+      var songPath = DOWNLOAD_DIR + currentSong.id + '.mp3';
+      console.log(songPath);
+      audioStream.playAudioFile(songPath);
       audioStream.once('fileEnd', nextSong);
     }
   } else {
@@ -91,7 +97,7 @@ function start() {
 
 //Stop the audio
 function stop() {
-  stream.stopAudioFile();
+  audioStream.stopAudioFile();
   if(queue.length > 0) {
     queue.shift()
   }
@@ -106,7 +112,7 @@ function nextSong() {
 }
 
 
-//Skip if more than 50% of the users type !skip
+//Skip if more than 50% of the users have typed !skip
 function skip(userID) {
   if (skipArray == null) {
     skipArray = Array(bot.servers[0].members.length);
@@ -150,7 +156,8 @@ function findVoiceChannelIdWhereUserIs(userID) {
   return voiceChannel;
 }
 
-function joinChannel(user, userID, channelID) {
+//Join the voice channel where the user is
+function joinChannel(userID, channelID) {
   var voiceChannel = findVoiceChannelIdWhereUserIs(userID);
 
   if(voiceChannel != null) {
@@ -159,10 +166,6 @@ function joinChannel(user, userID, channelID) {
           audioStream = stream;
       });
     });
-
-    //sendMessage('@' + user + " YES SIR, I'M COMING!", channelID);
-  } else {
-    //sendMessage('@' + user + " You aren't in a voice channel!", channelID);
   }
 }
 
@@ -181,13 +184,6 @@ function debug() {
 
 bot.on('ready', function(rawEvent) {
   console.log(bot.username + " connected (" + bot.id + ")");
-  setInterval(debug, 5000);
-  var ys = new YoutubeSong('https://www.youtube.com/watch?v=4tCJKt2R4Do', 'Okawi', '12345678901234567890');
-  console.log(ys);
-  if(ys.isValid) {
-    ys.downloadSong(function (err) {
-      if(err) console.log(err);
-      else    console.log('Téléchargement fini');
-    });
-  }
+//  setInterval(debug, 5000);
+  // addSong('https://www.youtube.com/watch?v=zK44QmjAocE', 'Okawi', '12345678901234567890');
 });

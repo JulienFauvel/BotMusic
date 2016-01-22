@@ -32,7 +32,6 @@ module.exports = function YoutubeSong(videoUrl, username, userID) {
   }
 
   YoutubeSong.prototype.downloadSong = function(callback) {
-    console.log('Type of callback : '+ typeof callback);
     var dest = DOWNLOAD_DIR + this.id + '.flv';
     downloadManager.downloadVideo(
       this.videoUrl,
