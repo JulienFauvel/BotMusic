@@ -147,12 +147,13 @@ function skip(userID) {
 
   var onlineMembers = 0;
   for (var i = 0; i < bot.servers[serverID].members.length; i++) {
+    console.log(bot.servers[serverID].members[i]);
     if (bot.servers[serverID].members[i].status == "online")
       onlineMembers++;
   }
 
   console.log('onlineMembers = ' + onlineMembers);
-  console.log((skipSum > (onlineMembers-1 / 2)) + '%');
+  console.log((skipSum > (onlineMembers-1 / 2)));
   console.log(skipArray);
 
   if (skipSum > (onlineMembers-1 / 2)) {
