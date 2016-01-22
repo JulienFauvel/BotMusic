@@ -1,11 +1,10 @@
 'use strict';
 
 var DiscordClient = require('discord.io');
-var YoutubeSong = require('./youtubesong.js');
+var YoutubeSong = require('./youtubesong');
 var auth = require('../auth.json');
 var http = require('http');
 var fs = require('fs');
-var URL = require('url');
 
 var DOWNLOAD_DIR = './musics/';
 
@@ -20,17 +19,17 @@ var bot = new DiscordClient({
   password: auth.password
 });
 
-bot.on('message', function(user, userID, channelID, message, rawEvent) {
+bot.on('message', function(username, userID, channelID, message, rawEvent) {
   var cmd = message.toLowerCase().split(" ")[0];
 
   switch (cmd) {
     case "!come":
     case "!came": {
-      joinChannel(user, userID, channelID);
+      joinChannel(username, userID, channelID);
     } break;
 
     case "!addsong": {
-      addSong(message.toLowerCase().split(" ")[1]);
+      addSong(message.split(" ")[1], username, userID);
     } break;
 
     case "!skip": {
@@ -47,13 +46,13 @@ bot.on('message', function(user, userID, channelID, message, rawEvent) {
   }
 });
 
-function addSong(url) {
+function addSong(url, username, userID) {
   if(url && url.length > 0) {
-    var youtubeSong = new YoutubeSong(url, user, userID);
+    var youtubeSong = new YoutubeSong(url, username, userID);
 
     //If url is wrong
-    if(youtubeSong.isVald) {
-      youtubeSong.downloadFile(function (err) {
+    if(youtubeSong.isValid) {
+      youtubeSong.downloadSong(function (err) {
         if(err) {
           console.log(err);
           sendMessage('@' + youtubeSong.username + ' Impossible to load ' + youtubeSong.url);
@@ -161,9 +160,9 @@ function joinChannel(user, userID, channelID) {
       });
     });
 
-    sendMessage('@' + user + " YES SIR, I'M COMING!", channelID);
+    //sendMessage('@' + user + " YES SIR, I'M COMING!", channelID);
   } else {
-    sendMessage('@' + user + " You aren't in a voice channel!", channelID);
+    //sendMessage('@' + user + " You aren't in a voice channel!", channelID);
   }
 }
 
@@ -183,7 +182,7 @@ function debug() {
 bot.on('ready', function(rawEvent) {
   console.log(bot.username + " connected (" + bot.id + ")");
   setInterval(debug, 5000);
-  var ys = new YoutubeSong('https://www.youtube.com/watch?v=CDfOFyXGgJU', 'Okawi', '12345678901234567890');
+  var ys = new YoutubeSong('https://www.youtube.com/watch?v=4tCJKt2R4Do', 'Okawi', '12345678901234567890');
   console.log(ys);
   if(ys.isValid) {
     ys.downloadSong(function (err) {

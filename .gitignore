@@ -2,4 +2,5 @@ auth.json
 tenc
 node_modules/*
 *.mp3
+*.flv
 npm-debug.log
