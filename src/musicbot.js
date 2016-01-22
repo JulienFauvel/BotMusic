@@ -131,6 +131,7 @@ function nextSong() {
 
 //Skip if more than 50% of the users have typed !skip
 function skip(userID) {
+  console.log(bot.servers[0]);
   if (skipArray == null) {
     skipArray = Array(bot.servers[0].members.length);
     skipArray.fill(0);
@@ -202,5 +203,5 @@ function debug() {
 bot.on('ready', function(rawEvent) {
   console.log(bot.username + " connected (" + bot.id + ")");
 //  setInterval(debug, 5000);
-  addSong('https://www.youtube.com/watch?v=zK44QmjAocE', 'Okawi', '12345678901234567890');
+//  addSong('https://www.youtube.com/watch?v=zK44QmjAocE', 'Okawi', '12345678901234567890');
 });
