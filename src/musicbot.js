@@ -115,16 +115,15 @@ function start() {
 //Stop the audio
 function stop() {
   audioStream.stopAudioFile();
-  if(queue.length > 0) {
-    queue.shift()
-  }
   currentSong = null;
 }
 
 //Start the next song if there is one
 function nextSong() {
   stop();
-  queue.shift();
+  if(queue.length > 0) {
+    queue.shift();
+  }
   start();
 }
 
