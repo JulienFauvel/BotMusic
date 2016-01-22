@@ -52,25 +52,42 @@ bot.on('message', function(username, userID, channelID, message, rawEvent) {
 
 function addSong(url, username, userID) {
   if(url && url.length > 0) {
+
     var youtubeSong = new YoutubeSong(url, username, userID);
 
-    //If url is wrong
-    if(youtubeSong.isValid) {
-      youtubeSong.downloadSong(function (err) {
-        if(err) {
-          console.log(err);
-          sendMessage('@' + youtubeSong.username + ' Impossible to load ' + youtubeSong.url);
-        } else {
-          queue.push(youtubeSong);
-          console.log(queue);
-          if(currentSong == null) {
-            start();
-          }
-        }
-      });
+    var exist = false;
+
+    var files = fs.readdirSync(DOWNLOAD_DIR);
+    for (var i = 0; i < files.length; i++) {
+      if(files[i] == youtubeSong.id + '.mp3') {
+        exist = true;
+        break;
+      }
     }
-  } else {
-    console.log('Empty addsong requested');
+
+    if(exist && youtubeSong.isValid) {
+      console.log('Music already download, adding to queue...');
+      queue.push(youtubeSong);
+      if(currentSong == null) {
+        start();
+      }
+    } else {
+      //If url is wrong
+      if(youtubeSong.isValid) {
+        youtubeSong.downloadSong(function (err) {
+          if(err) {
+            console.log(err);
+            sendMessage('@' + youtubeSong.username + ' Impossible to load ' + youtubeSong.url);
+          } else {
+            queue.push(youtubeSong);
+            console.log(queue);
+            if(currentSong == null) {
+              start();
+            }
+          }
+        });
+      }
+    }
   }
 }
 
@@ -185,5 +202,5 @@ function debug() {
 bot.on('ready', function(rawEvent) {
   console.log(bot.username + " connected (" + bot.id + ")");
 //  setInterval(debug, 5000);
-  // addSong('https://www.youtube.com/watch?v=zK44QmjAocE', 'Okawi', '12345678901234567890');
+  addSong('https://www.youtube.com/watch?v=zK44QmjAocE', 'Okawi', '12345678901234567890');
 });

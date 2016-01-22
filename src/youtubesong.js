@@ -3,7 +3,7 @@
 var http = require('http');
 var fs = require('fs');
 var request = require('request');
-var downloadManager = require('./downloadmanager');
+var dm = require('./downloadmanager');
 
 var DOWNLOAD_DIR = './musics/';
 
@@ -14,17 +14,16 @@ module.exports = function YoutubeSong(videoUrl, username, userID) {
   var match = videoUrl.match(regExp);
 
   if (match && match[2].length == 11) {
-    this.id = Date.now();
     this.videoUrl = videoUrl;
     this.username = username;
     this.userID = userID;
     this.isValid = true;
 
     //Extract the video's ID from the url
-    this.videoID = this.videoUrl.split('v=')[1];
-    var ampersandPosition = this.videoID.indexOf('&');
+    this.id = this.videoUrl.split('v=')[1];
+    var ampersandPosition = this.id.indexOf('&');
     if(ampersandPosition != -1) {
-      this.videoID = videoID.substring(0, ampersandPosition);
+      this.id = this.id.substring(0, ampersandPosition);
     }
 
   } else {
@@ -32,10 +31,12 @@ module.exports = function YoutubeSong(videoUrl, username, userID) {
   }
 
   YoutubeSong.prototype.downloadSong = function(callback) {
-    var dest = DOWNLOAD_DIR + this.id + '.flv';
-    downloadManager.downloadVideo(
+    var dir_dest = DOWNLOAD_DIR;
+    var file_dest = this.id + '.flv';
+    dm.downloadVideo(
       this.videoUrl,
-      dest,
+      dir_dest,
+      file_dest,
       callback
     );
   }
