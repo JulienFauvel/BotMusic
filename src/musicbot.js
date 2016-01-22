@@ -132,7 +132,7 @@ function nextSong() {
 //Skip if more than 50% of the users have typed !skip
 function skip(userID) {
   var serverID = Object.keys(bot.servers)[0];
-  console.log(bot.servers[serverID]);
+
   if (skipArray == null) {
     skipArray = Array(bot.servers[serverID].members.length);
     skipArray.fill(0);
@@ -151,7 +151,11 @@ function skip(userID) {
       onlineMembers++;
   }
 
-  if (skipSum > (onlineMembers / 2)) {
+  console.log('onlineMembers = ' + onlineMembers);
+  console.log((skipSum > (onlineMembers-1 / 2)) + '%');
+  console.log(skipArray);
+
+  if (skipSum > (onlineMembers-1 / 2)) {
     if (queue.length > 0) {
       nextSong();
     }
