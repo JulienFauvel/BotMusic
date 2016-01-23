@@ -144,9 +144,8 @@ function skip(userID) {
   }
 
   var onlineMembers = 0;
-  for (var member in bot.servers[serverID].members) {
-    console.log(member);
-    if (member[status] == 'online')
+  for (var memberID in bot.servers[serverID].members) {
+    if (bot.servers[serverID].members[memberID].status == 'online')
       onlineMembers++;
   }
 
