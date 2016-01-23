@@ -21,7 +21,7 @@ var bot = new DiscordClient({
 
 bot.on('message', function(username, userID, channelID, message, rawEvent) {
   var cmd = message.toLowerCase().split(" ")[0];
-  console.log(cmd);
+  console.log(username + ' : ' + userID + ' - ' + cmd);
   switch (cmd) {
     case "!come":
     case "!came": {
@@ -45,7 +45,11 @@ bot.on('message', function(username, userID, channelID, message, rawEvent) {
     } break;
 
     case "!stop": {
-      //stop();
+      if(username == 'Okawi') stop();
+    } break;
+
+    case "!next": {
+      if(username == 'Okawi') nextSong();
     } break;
   }
 });
@@ -128,38 +132,29 @@ function stop() {
 //Skip if more than 50% of the users have typed !skip
 //TODO: check for user in the same voice channel
 function skip(userID) {
-  var serverID = Object.keys(bot.servers)[0];
 
-  if (skipArray == null) {
-    skipArray = Array();
-    for (var i = 0; i < bot.servers[serverID].members.length; i++) {
-      skipArray[i] = 0;
-    }
-  }
-
-  skipArray[userID] = 1;
-
-  var skipSum = 0;
-  for (var i = 0; i < skipArray.length; i++) {
-    skipSum += skipArray[i];
-  }
+  skipSet = new Set();
+  skipSet.add(userID);
+  var skipSum = skipSet.size;
 
   var onlineMembers = 0;
+  var serverID = Object.keys(bot.servers)[0];
   for (var memberID in bot.servers[serverID].members) {
-    if (bot.servers[serverID].members[memberID].status == 'online')
+    if (bot.servers[serverID].members[memberID].status == 'online') {
       onlineMembers++;
+    }
   }
 
   console.log('onlineMembers = ' + onlineMembers);
   console.log('Condition : ' + (skipSum > (onlineMembers-1 / 2)));
-  console.log(skipArray);
+  console.log(skipSet);
 
   if (onlineMembers > 0 && skipSum > (onlineMembers-1 / 2)) {
     if (queue.length > 0) {
       nextSong();
     }
     console.log('Skipped song')
-    skipArray.fill(0);
+    skipSet.clear();
   }
 }
 
