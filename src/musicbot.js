@@ -37,7 +37,7 @@ bot.on('message', function(username, userID, channelID, message, rawEvent) {
     } break;
 
     case "!reset": {
-      reset();
+      //reset();
     } break;
 
     case "!start": {
@@ -110,29 +110,23 @@ function start() {
 
 }
 
-//Stop the audio
-function stop() {
-  audioStream.stopAudioFile();
-  currentSong = null;
-}
-
 //Start the next song if there is one
 function nextSong() {
   if(queue.length > 0) {
     queue.shift();
+    start();
   }
-  stop();
-  start();
 }
 
-function skipSong() {
-  queue.shift()
-  stop();
+//Stop the audio
+function stop() {
+  currentSong = null;
+  audioStream.stopAudioFile();
 }
 
 
 //Skip if more than 50% of the users have typed !skip
-//TODO: check for
+//TODO: check for user in the same voice channel
 function skip(userID) {
   var serverID = Object.keys(bot.servers)[0];
 
@@ -150,6 +144,7 @@ function skip(userID) {
 
   var onlineMembers = 0;
   for (var member in bot.servers[serverID].members) {
+    console.log(member);
     if (member.status == 'online')
       onlineMembers++;
   }
@@ -160,7 +155,7 @@ function skip(userID) {
 
   if (skipSum > (onlineMembers-1 / 2)) {
     if (queue.length > 0) {
-      skipSong();
+      nextSong();
     }
     console.log('Skipped song')
     skipArray.fill(0);
