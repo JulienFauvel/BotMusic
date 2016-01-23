@@ -120,8 +120,9 @@ function nextSong() {
 
 //Stop the audio
 function stop() {
-  currentSong = null;
+  audioStream.once('fileEnd', function(){});
   audioStream.stopAudioFile();
+  currentSong = null;
 }
 
 
@@ -145,7 +146,7 @@ function skip(userID) {
   var onlineMembers = 0;
   for (var member in bot.servers[serverID].members) {
     console.log(member);
-    if (member.status == 'online')
+    if (member[status] == 'online')
       onlineMembers++;
   }
 
@@ -153,7 +154,7 @@ function skip(userID) {
   console.log('Condition : ' + (skipSum > (onlineMembers-1 / 2)));
   console.log(skipArray);
 
-  if (skipSum > (onlineMembers-1 / 2)) {
+  if (onlineMembers > 0 && kipSum > (onlineMembers-1 / 2)) {
     if (queue.length > 0) {
       nextSong();
     }
