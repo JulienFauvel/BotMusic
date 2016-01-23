@@ -10,8 +10,8 @@ var DOWNLOAD_DIR = './musics/';
 
 var audioStream = null;
 var currentSong = null;
-var queue = Array();
-var skipArray = Array();
+var queue       = Array();
+var skipSet   = Array();
 
 var bot = new DiscordClient({
   autorun: true,
@@ -45,11 +45,11 @@ bot.on('message', function(username, userID, channelID, message, rawEvent) {
     } break;
 
     case "!stop": {
-      if(username == 'Okawi') stop();
+      if(userID == '77542813994065920') stop();
     } break;
 
     case "!next": {
-      if(username == 'Okawi') nextSong();
+      if(userID == '77542813994065920') nextSong();
     } break;
   }
 });
