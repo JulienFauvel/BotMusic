@@ -41,11 +41,11 @@ bot.on('message', function(username, userID, channelID, message, rawEvent) {
     } break;
 
     case "!start": {
-      start();
+      //start();
     } break;
 
     case "!stop": {
-      stop();
+      //stop();
     } break;
   }
 });
@@ -54,7 +54,6 @@ function addSong(url, username, userID) {
   if(url && url.length > 0) {
 
     var youtubeSong = new YoutubeSong(url, username, userID);
-
     var exist = false;
 
     var files = fs.readdirSync(DOWNLOAD_DIR);
@@ -132,8 +131,10 @@ function skip(userID) {
   var serverID = Object.keys(bot.servers)[0];
 
   if (skipArray == null) {
-    skipArray = Array(bot.servers[serverID].members.length);
-    skipArray.fill(0);
+    skipArray = Array();
+    for (var i = 0; i < bot.servers[serverID].members.length; i++) {
+      skipArray[i] = 0;
+    }
   }
 
   skipArray[userID] = 1;
