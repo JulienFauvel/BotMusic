@@ -153,7 +153,7 @@ function skip(userID) {
   console.log('Condition : ' + (skipSum > (onlineMembers-1 / 2)));
   console.log(skipArray);
 
-  if (onlineMembers > 0 && kipSum > (onlineMembers-1 / 2)) {
+  if (onlineMembers > 0 && skipSum > (onlineMembers-1 / 2)) {
     if (queue.length > 0) {
       nextSong();
     }
