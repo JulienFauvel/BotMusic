@@ -123,7 +123,7 @@ function nextSong() {
 
 //Stop the audio
 function stop() {
-  audioStream.once('fileEnd', undefined);
+  audioStream.removeListener('fileEnd', nextSong);
   audioStream.stopAudioFile();
   currentSong = null;
 }
@@ -137,18 +137,20 @@ function skip(userID) {
   var skipSum = skipSet.size;
 
   var onlineMembers = 0;
-  var serverID = Object.keys(bot.servers)[0];
+  var serverID = Object.keys(bot.servers)[0]; //Only one server
   for (var memberID in bot.servers[serverID].members) {
     if (bot.servers[serverID].members[memberID].status == 'online') {
       onlineMembers++;
     }
   }
 
-  console.log('onlineMembers = ' + onlineMembers);
+  console.log('onlineMembers = ' + (onlineMembers-1));
+  console.log('skipSum : ' + skipSum);
+  console.log('(onlineMembers-1 / 2) : ' + (onlineMembers-1 / 2));
   console.log('Condition : ' + (skipSum > (onlineMembers-1 / 2)));
   console.log(skipSet);
 
-  if (onlineMembers > 0 && skipSum > (onlineMembers-1 / 2)) {
+  if (skipSum > (onlineMembers-1 / 2)) {
     if (queue.length > 0) {
       nextSong();
     }
