@@ -11,7 +11,7 @@ var DOWNLOAD_DIR = './musics/';
 var audioStream = null;
 var currentSong = null;
 var queue       = Array();
-var skipSet   = Array();
+var skipSet     = new Set();
 
 var bot = new DiscordClient({
   autorun: true,
@@ -123,7 +123,7 @@ function nextSong() {
 
 //Stop the audio
 function stop() {
-  audioStream.once('fileEnd', function(){});
+  audioStream.once('fileEnd', undefined);
   audioStream.stopAudioFile();
   currentSong = null;
 }
@@ -133,7 +133,6 @@ function stop() {
 //TODO: check for user in the same voice channel
 function skip(userID) {
 
-  skipSet = new Set();
   skipSet.add(userID);
   var skipSum = skipSet.size;
 
