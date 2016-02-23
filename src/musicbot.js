@@ -205,5 +205,6 @@ function debug() {
 
 bot.on('ready', function(rawEvent) {
   console.log(bot.username + " connected (" + bot.id + ")");
-  setInterval(debug, 5000);
+  //Use for debug
+  //setInterval(debug, 5000);
 });
