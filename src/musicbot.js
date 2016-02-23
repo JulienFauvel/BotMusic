@@ -9,6 +9,7 @@ var fs = require('fs');
 var DOWNLOAD_DIR = './musics/';
 
 var audioStream = null;
+var currentVoiceChannel = null;
 var currentSong = null;
 var queue       = Array();
 var skipSet     = new Set();
@@ -23,8 +24,8 @@ bot.on('message', function(username, userID, channelID, message, rawEvent) {
   var cmd = message.toLowerCase().split(" ")[0];
   console.log(username + ' : ' + userID + ' - ' + cmd);
   switch (cmd) {
-    case "!come":
-    case "!came": {
+
+    case "!come": {
       joinChannel(userID, channelID);
     } break;
 
@@ -37,7 +38,7 @@ bot.on('message', function(username, userID, channelID, message, rawEvent) {
     } break;
 
     case "!reset": {
-      //reset();
+      if(userID == '77542813994065920') reset();
     } break;
 
     case "!start": {
@@ -95,6 +96,7 @@ function addSong(url, username, userID) {
 
 //reset the queue
 function reset() {
+  stop();
   queue.length = 0
 }
 
@@ -113,19 +115,20 @@ function start() {
 
 }
 
-//Start the next song if there is one
-function nextSong() {
-  if(queue.length > 0) {
-    queue.shift();
-    start();
-  }
-}
-
 //Stop the audio
 function stop() {
   audioStream.removeListener('fileEnd', nextSong);
   audioStream.stopAudioFile();
   currentSong = null;
+}
+
+//Start the next song if there is one
+function nextSong() {
+  stop();
+  if(queue.length > 1) {
+    queue.shift();
+    start();
+  }
 }
 
 
@@ -176,15 +179,13 @@ function findVoiceChannelIdWhereUserIs(userID) {
 
 //Join the voice channel where the user is
 function joinChannel(userID, channelID) {
-  var voiceChannel = findVoiceChannelIdWhereUserIs(userID);
+  currentVoiceChannel = findVoiceChannelIdWhereUserIs(userID);
 
-  if(voiceChannel != null) {
-    bot.joinVoiceChannel(voiceChannel, function () {
-      bot.getAudioContext({channel: voiceChannel, stereo: true}, function(stream) {
-          audioStream = stream;
-      });
+  bot.joinVoiceChannel(voiceChannel, function () {
+    bot.getAudioContext({channel: voiceChannel, stereo: true}, function(stream) {
+        audioStream = stream;
     });
-  }
+  });
 }
 
 function sendMessage(message, channelID) {
@@ -202,6 +203,4 @@ function debug() {
 
 bot.on('ready', function(rawEvent) {
   console.log(bot.username + " connected (" + bot.id + ")");
-//  setInterval(debug, 5000);
-//  addSong('https://www.youtube.com/watch?v=zK44QmjAocE', 'Okawi', '12345678901234567890');
 });
