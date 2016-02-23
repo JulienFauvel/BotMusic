@@ -107,13 +107,18 @@ function start() {
     if(currentSong && currentSong.isValid) {
       var songPath = DOWNLOAD_DIR + currentSong.id + '.mp3';
       audioStream.playAudioFile(songPath);
-      audioStream.once('fileEnd', nextSong);
-      queue.shift();
+      audioStream.once('fileEnd', songEnded);
     }
   } else {
     currentSong = null;
   }
 
+}
+
+function songEnded() {
+  console.log("songEnded");
+  queue.shift();
+  start();
 }
 
 //Stop the audio
@@ -124,7 +129,8 @@ function stop() {
 
 //Start the next song if there is one
 function nextSong() {
-  start();
+  console.log("stop");
+  stop();
 }
 
 
