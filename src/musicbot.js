@@ -108,6 +108,7 @@ function start() {
       var songPath = DOWNLOAD_DIR + currentSong.id + '.mp3';
       audioStream.playAudioFile(songPath);
       audioStream.once('fileEnd', nextSong);
+      queue.shift();
     }
   } else {
     currentSong = null;
@@ -117,18 +118,13 @@ function start() {
 
 //Stop the audio
 function stop() {
-  audioStream.removeListener('fileEnd', nextSong);
   audioStream.stopAudioFile();
   currentSong = null;
 }
 
 //Start the next song if there is one
 function nextSong() {
-  stop();
-  if(queue.length > 1) {
-    queue.shift();
-    start();
-  }
+  start();
 }
 
 
