@@ -196,11 +196,12 @@ function sendMessage(message, channelID) {
 }
 
 function debug() {
-  console.log('currentSong : ' + currentSong);
-  console.log('queue : ' + queue);
+  console.log('currentSong : ' + JSON.stringify(currentSong));
+  console.log('queue : ' + JSON.stringify(queue));
 }
 
 
 bot.on('ready', function(rawEvent) {
   console.log(bot.username + " connected (" + bot.id + ")");
+  setInterval(debug, 5000);
 });

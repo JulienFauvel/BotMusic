@@ -5,7 +5,7 @@
 	},
 
 	"dependencies": {
-		"discord.io": "*",
+		"discord.io": "1.7.1",
 		"commander": "*",
 		"ytdl-core": "*"
 	}
