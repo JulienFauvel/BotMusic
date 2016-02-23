@@ -181,8 +181,8 @@ function findVoiceChannelIdWhereUserIs(userID) {
 function joinChannel(userID, channelID) {
   currentVoiceChannel = findVoiceChannelIdWhereUserIs(userID);
 
-  bot.joinVoiceChannel(voiceChannel, function () {
-    bot.getAudioContext({channel: voiceChannel, stereo: true}, function(stream) {
+  bot.joinVoiceChannel(currentVoiceChannel, function () {
+    bot.getAudioContext({channel: currentVoiceChannel, stereo: true}, function(stream) {
         audioStream = stream;
     });
   });
