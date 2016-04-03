@@ -2,7 +2,6 @@
 
 var http = require('http');
 var fs = require('fs');
-var request = require('request');
 var dm = require('./downloadmanager');
 
 var DOWNLOAD_DIR = './musics/';
