@@ -38,23 +38,24 @@ bot.on('message', function(username, userID, channelID, message, rawEvent) {
     } break;
 
     case "!reset": {
-        //TODO: Handle permission reset();
+        //TODO : Handle permission reset();
     } break;
 
     case "!start": {
-        //TODO: Handle permission start();
+        //TODO : Handle permission start();
     } break;
 
     case "!stop": {
-      //TODO: Handle permission stop();
+      //TODO : Handle permission stop();
     } break;
 
     case "!next": {
-      //TODO: Correctly implement vote to skip nextSong();
+      //TODO : Correctly implement vote to skip nextSong();
     } break;
     
     case "!johncena": {
         joinChannel(userID, channelID);
+        while(audioStream == null);
         addSong("https://www.youtube.com/watch?v=enMReCEcHiM", username, userID);
     } break;
   }
@@ -189,10 +190,8 @@ function joinChannel(userID, channelID) {
   currentVoiceChannel = findVoiceChannelIdWhereUserIs(userID);
 
   bot.joinVoiceChannel(currentVoiceChannel, function () {
-    connected = false;
     bot.getAudioContext({channel: currentVoiceChannel, stereo: true}, function(stream) {
         audioStream = stream;
-        connected = true;
     });
   });
 }
