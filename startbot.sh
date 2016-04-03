@@ -1,0 +1,1 @@
+nohup npm start </dev/null >botmusic.log 2>&1 &

@@ -38,19 +38,19 @@ bot.on('message', function(username, userID, channelID, message, rawEvent) {
     } break;
 
     case "!reset": {
-      if(userID == '77542813994065920') reset();
+        //TODO: Handle permission reset();
     } break;
 
     case "!start": {
-      //start();
+        //TODO: Handle permission start();
     } break;
 
     case "!stop": {
-      if(userID == '77542813994065920') stop();
+      //TODO: Handle permission stop();
     } break;
 
     case "!next": {
-      if(userID == '77542813994065920') nextSong();
+      //TODO: Correctly implement vote to skip nextSong();
     } break;
     
     case "!johncena": {
