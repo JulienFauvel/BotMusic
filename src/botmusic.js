@@ -55,8 +55,10 @@ bot.on('message', function(username, userID, channelID, message, rawEvent) {
     
     case "!johncena": {
         joinChannel(userID, channelID);
-        while(audioStream == null);
-        addSong("https://www.youtube.com/watch?v=enMReCEcHiM", username, userID);
+        //Wait 0.5s to let the bot get the audiostream
+        setTimeout(function() {
+            addSong("https://www.youtube.com/watch?v=enMReCEcHiM", username, userID);        
+        }, 500);
     } break;
   }
 });
