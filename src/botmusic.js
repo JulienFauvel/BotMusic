@@ -52,6 +52,11 @@ bot.on('message', function(username, userID, channelID, message, rawEvent) {
     case "!next": {
       if(userID == '77542813994065920') nextSong();
     } break;
+    
+    case "!johncena": {
+        joinChannel(userID, channelID);
+        addSong("https://www.youtube.com/watch?v=enMReCEcHiM", username, userID);
+    } break;
   }
 });
 

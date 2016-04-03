@@ -1,7 +1,7 @@
 {
-	"name": "BotMusic",
+	"name": "botmusic",
 	"scripts": {
-		"start": "node ./src/musicbot.js"
+		"start": "node ./src/botmusic.js"
 	},
 
 	"dependencies": {
